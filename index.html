@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <title>Project - Fall 2022</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        .myContainer {
+            margin: auto;
+            width: 100%;
+            height: 100%;
+            /* position: relative; */
+            /* overflow: scroll; */
+        }
+
+        #line_svg,
+        #behavioralSimilarityLineChart {
+            /* width: 99%;
+                height: 470px; */
+            height: 100%;
+            width: 100%;
+        }
+
+        #lineplots{
+            height: 49%;
+            border: 1px black solid;
+            margin: 0px 1px 6px 1px;
+            border-radius: 10px;
+        }
+        #graph_svg {
+            width: 50%;
+            height: 100%;
+            border: 1px solid black;
+            /* margin: 5px; */
+            padding: 5px;
+            border-radius: 10px;
+            float: left;
+            display: none;
+        }
+
+        #stackAreaChart {
+            width: 100%;
+            height: 100%;
+        }
+
+        #description {
+            background-color: rgb(250, 249, 247);
+            margin: 10px;
+            margin-right: 20px;
+            border: 1px solid rgb(23, 22, 22);
+            border-radius: 10px;
+            padding: 5px;
+            width: 99%;
+            /* float: left; */
+        }
+
+        #line_chart {
+            float: left;
+            width: 100%;
+            height: 100%;
+        }
+
+        #graph_chart {
+            float: right;
+        }
+
+        .detailedChart {
+            width: 100%;
+            height: 20%;
+            /* border-bottom: solid black 2px; */
+        }
+
+        .svgGraph {
+            width: 24%;
+            height: 98%;
+            border: solid black 1px;
+        }
+        .spanLabel{
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        #myTooltip {
+            position: absolute;
+            text-align: left;
+            width: 100px;
+            height: auto;
+            min-height: 20px;
+            font: 12px sans-serif;
+            background-color: rgb(255, 255, 255);
+            border: 2px solid rgb(21, 22, 22);
+            color: #121414;
+            border-radius: 8px 8px 8px 8px;
+            pointer-events: none;
+            padding: 11px;
+        }
+        .desc {
+            /* float:left; */
+            /* margin: 10px; */
+            /* padding-right: 10px; */
+            /* border: 1px solid rgb(23, 22, 22); */
+            /* border-right: 2px solid rgb(112, 116, 116); */
+        }
+
+        #modal_container {
+            background-color: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        #modal_box {
+            background-color: rgba(255, 255, 255);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 800px;
+            height: 600px;
+            max-width: 100%;
+            border-radius: 10px;
+            padding: 20px 20px;
+        }
+
+        #modal_button {
+            background-color: #85c1e9;
+            border: 0;
+            border-radius: 5px;
+            color: #ffff;
+            font-size: 14px;
+            padding: 10px 25px;
+            width: fit-content;
+            position: relative;
+            float: right;
+        }
+
+        #modal_svg {
+            width: 700px;
+            height: 500px;
+            border: 1px solid lightgray;
+            margin: 30px 10px;
+            border-radius: 10px;
+        }
+
+        #log_container {
+            background-color: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        #log_box {
+            background-color: rgba(255, 255, 255);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 800px;
+            height: 600px;
+            max-width: 100%;
+            border-radius: 10px;
+            padding: 20px 20px;
+        }
+
+        #log_button {
+            background-color: #85c1e9;
+            border: 0;
+            border-radius: 5px;
+            color: #ffff;
+            font-size: 14px;
+            padding: 10px 25px;
+            width: fit-content;
+            position: relative;
+            float: right;
+        }
+
+        #log_text_container {
+            width: 700px;
+            height: 500px;
+            border: 1px solid lightgray;
+            margin: 15px 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .control-plane {}
+
+        .line-charts {
+            width: 100%;
+            height: 60%;
+            margin-left: 0.1%;
+        }
+
+        .overview-charts {
+            margin: 1% 0%;
+            height: 28%;
+        }
+
+
+        .left-line-chart,
+        .card,
+        .card-body,
+        .tab-content,
+        .tab-pane {
+            height: 100%;
+            /* overflow: scroll; */
+        }
+
+        body {
+            height: 100vh;
+            /* overflow: scroll; */
+            /* width: 100vh; */
+        }
+
+        .header {
+            height: 10%;
+            width: 100%;
+        }
+
+        .detailed-charts-header {
+            height: 3%;
+            text-align: center;
+        }
+
+        .detailed-charts{
+            height: 95%;
+        }
+    </style>
+    <link rel="stylesheet" href="css/overlayloader.css">
+    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
+    <script src="js/OrigPlot.js"></script>
+    <script src="js/smallPlots.js"></script>
+</head>
+
+<body>
+    <div id="modal_container">
+        <div id="modal_box">
+            <svg id="modal_svg">
+            </svg>
+            <div id="modal_button">
+                Close
+            </div>
+        </div>
+    </div>
+    <div class="myContainer">
+        <div class="header row" style="z-index: -10;">
+            <h1 class="text-center" style="font-size: 2em;">Visual Analysis of Cloud Computing Performance Using Behavioral Lines</h1>
+            <h4 class="text-center" style="font-size: 1em;">Abichal-Bharath-Pavan-Saicharan-Sakshi-Takshshila</h4>
+        </div>
+
+        <div class="row line-charts">
+            <div class="col-12 left-line-chart" id="left-line-chart">
+                <div id="lineplots">
+                    <svg id="behavioralSimilarityLineChart" class="behavioralSimilarityLineChart"></svg>
+                </div>
+                <div id="lineplots">
+                    <svg id="line_svg" class="line_svg"></svg>
+                </div>
+            </div>
+            <div class="col-6 card bg-light" id="graph_svg">
+                <div class="detailed-charts-header">
+                    <span style="font-size:0.8em">Brush or make an area selection on any line or behavioral chart to see more charts</span>
+                </div>
+                <div class="card-body detailed-charts">
+                    <span class="spanLabel">CPU utilization</span>
+                    <div class="detailedChart">
+                        <svg class="svgGraph" id="cpu_0"></svg>
+                        <svg class="svgGraph" id="cpu_1"></svg>
+                        <svg class="svgGraph" id="cpu_2"></svg>
+                        <svg class="svgGraph" id="cpu_3"></svg>
+                    </div>
+                    <span class="spanLabel">Disk utilization</span>
+                    <div class="detailedChart">
+                        <svg class="svgGraph" id="disk_0"></svg>
+                        <svg class="svgGraph" id="disk_1"></svg>
+                        <svg class="svgGraph" id="disk_2"></svg>
+                        <svg class="svgGraph" id="disk_3"></svg>
+                    </div>
+                    <span class="spanLabel">RAM utilization</span>
+                    <div class="detailedChart">
+                        <svg class="svgGraph" id="memory_0"></svg>
+                        <svg class="svgGraph" id="memory_1"></svg>
+                        <svg class="svgGraph" id="memory_2"></svg>
+                        <svg class="svgGraph" id="memory_3"></svg>
+                    </div>
+                    <span class="spanLabel">Network</span>
+                    <div class="detailedChart" style="border-bottom: none;">
+                        <svg class="svgGraph" id="network_0"></svg>
+                        <svg class="svgGraph" id="network_1"></svg>
+                        <svg class="svgGraph" id="network_2"></svg>
+                        <svg class="svgGraph" id="network_3"></svg>
+                    </div>
+                </div>
+        </div>
+            <div id="log_container">
+                <div id="log_box">
+                    <div id="log_text_container">
+                        <p id="log" style="margin: 15px 15px">Please click on any line to see its corresponding logs at
+                            that timestamp</p>
+                    </div>
+                    <div id="log_button">
+                        Close
+                    </div>
+                </div>
+            </div>
+
+            <!--             <div class="col-lg-12" id="description">
+                <div class="col-lg-12">
+                    <h5>Logs</h5>
+                    <p id="log">Please click on any line to see its corresponding logs at that timestamp</p>
+                </div>
+            </div> -->
+        </div>
+
+        <div class="row overview-charts">
+            <div class="col-9 card bg-light">
+                <div class="card-body">
+                    <svg id="stackAreaChart" class="stackAreaChart"></svg>
+                </div>
+
+            </div>
+            <div class="col-3 card bg-light control-plane">
+                <!-- <h3 style="text-align: center;">Control Panel</h3> -->
+                <span style="text-align: center;font-weight: 800;margin-top: 10px;">Control Panel</span>
+                <div class="card-body">
+                    <div class="col-lg-5">
+                        <span class="spanLabel">Baseline Node</span>
+                        <input type="number" id="userSelectedNode" value="5" onchange="onBaselineNodeChanged(this)"
+                            min="1" max="10" style="width: 100%;border-radius: 2px;">
+                        <span class="spanLabel">a: </span>
+                        <input type="number" id="useSelectedA" value="3" onchange="onAChanged(this)"
+                            min="1" max="5" style="width: 100%;border-radius: 2px;">
+                            <div>
+                                <!-- <h6>Select Metric: </h6> -->
+                                <span class="spanLabel">Metric:</span>
+                                <select name="selectattribute" id="selectattribute" onchange="updateChart();">
+                                    <option value="cpu" selected>CPU</option>
+                                    <option value="disk">DISK</option>
+                                    <option value="memory">MEMORY</option>
+                                    <option value="network">NETWORK</option>
+                                </select>
+                            </div>
+                            <p></p>
+                            <button type="button" class="btn btn-primary" onclick="resetTheVisualization()">Reset</button>
+                    </div>
+                    <div class="col-lg-7" style="overflow: scroll;height: 100%;">
+                        <span>Node Info:</span><br>
+                        <div id="nodeInfo" >
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="overlay"></div>
+            <div class="spanner">
+                <div class="loader"></div>
+                <p>Updating visualization!</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>
